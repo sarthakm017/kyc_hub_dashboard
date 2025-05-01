@@ -18,18 +18,13 @@ A full-stack KYC (Know Your Customer) dashboard built with Node.js/Express + Mon
    cd backend
    npm install
    cp .env.example .env
-
-# Edit .env to set your MongoDB URI:
-
-# MONGODB_URI="mongodb+srv://username:password@cluster.mongodb.net/dbname"
-
-npm run dev
+   npm run dev
 
 3. **FrontEnd**
 
-cd ../frontend
-npm install
-cp .env.example .env
+   cd ../frontend
+   npm install
+   cp .env.example .env
 
 # Edit .env to set your API URL:
 
