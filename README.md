@@ -31,9 +31,11 @@ A full-stack KYC (Know Your Customer) dashboard built with Node.js/Express + Mon
 
    ```
 
-# Edit .env to set your API URL:
+```
+Edit .env to set your API URL:
 
-# REACT_APP_API_URL="http://localhost:5001/api"
+REACT_APP_API_URL="http://localhost:5001/api"
+```
 
 npm start
 
