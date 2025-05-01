@@ -1,5 +1,4 @@
-// frontend/src/components/Dashboard.js
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from "react";
 import {
   Layout,
   Row,
@@ -16,10 +15,10 @@ import {
   Empty,
   Input,
   Space,
-  theme
-} from 'antd';
-import { SearchOutlined } from '@ant-design/icons';
-import Highlighter from 'react-highlight-words';
+  theme,
+} from "antd";
+import { SearchOutlined } from "@ant-design/icons";
+import Highlighter from "react-highlight-words";
 import {
   LineChart,
   Line,
@@ -30,23 +29,23 @@ import {
   PieChart,
   Pie,
   Cell,
-  ResponsiveContainer
-} from 'recharts';
-import KycForm from './KycForm';
-import api from '../services/api';
+  ResponsiveContainer,
+} from "recharts";
+import KycForm from "./KycForm";
+import api from "../services/api";
 
 const { Content } = Layout;
-const COLORS = ['#1890ff', '#ff4d4f', '#52c41a', '#faad14'];
+const COLORS = ["#1890ff", "#ff4d4f", "#52c41a", "#faad14"];
 
 export default function Dashboard({ onDataChange }) {
-  const [loading, setLoading]       = useState(true);
-  const [metrics, setMetrics]       = useState({});
-  const [trendData, setTrendData]   = useState([]);
-  const [riskData, setRiskData]     = useState([]);
-  const [customers, setCustomers]   = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [metrics, setMetrics] = useState({});
+  const [trendData, setTrendData] = useState([]);
+  const [riskData, setRiskData] = useState([]);
+  const [customers, setCustomers] = useState([]);
   const [isModalVisible, setModalVisible] = useState(false);
-  const [searchText, setSearchText] = useState('');
-  const [searchedColumn, setSearchedColumn] = useState('');
+  const [searchText, setSearchText] = useState("");
+  const [searchedColumn, setSearchedColumn] = useState("");
   const searchInput = useRef(null);
 
   const { token } = theme.useToken();
@@ -54,12 +53,13 @@ export default function Dashboard({ onDataChange }) {
   const fetchAll = () => {
     setLoading(true);
     return Promise.all([
-      api.get('/dashboard/metrics'),
-      api.get('/dashboard/trends'),
-      api.get('/dashboard/risk-distribution'),
-      api.get('/kyc')
+      api.get("/dashboard/metrics"),
+      api.get("/dashboard/trends"),
+      api.get("/dashboard/risk-distribution"),
+      api.get("/kyc"),
     ])
       .then(([m, t, r, c]) => {
+        console.log(m, "sarthak");
         if (m.data.success) setMetrics(m.data.data);
         if (t.data.success) setTrendData(t.data.data);
         if (r.data.success) setRiskData(r.data.data);
@@ -70,39 +70,45 @@ export default function Dashboard({ onDataChange }) {
 
   useEffect(fetchAll, []);
 
-  const handleDelete = async id => {
+  const handleDelete = async (id) => {
     try {
       await api.delete(`/kyc/${id}`);
-      message.success('Entry deleted');
+      message.success("Entry deleted");
       await fetchAll();
       onDataChange?.();
     } catch {
-      message.error('Delete failed');
+      message.error("Delete failed");
     }
   };
 
-  // inline column search helpers
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
     setSearchText(selectedKeys[0]);
     setSearchedColumn(dataIndex);
   };
 
-  const handleReset = clearFilters => {
+  const handleReset = (clearFilters) => {
     clearFilters();
-    setSearchText('');
+    setSearchText("");
   };
 
-  const getColumnSearchProps = dataIndex => ({
-    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+  const getColumnSearchProps = (dataIndex) => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+    }) => (
       <div style={{ padding: 8 }}>
         <Input
           ref={searchInput}
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
-          onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+          onChange={(e) =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
           onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
-          style={{ marginBottom: 8, display: 'block' }}
+          style={{ marginBottom: 8, display: "block" }}
         />
         <Space>
           <Button
@@ -114,24 +120,27 @@ export default function Dashboard({ onDataChange }) {
           >
             Search
           </Button>
-          <Button onClick={() => handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+          <Button
+            onClick={() => handleReset(clearFilters)}
+            size="small"
+            style={{ width: 90 }}
+          >
             Reset
           </Button>
         </Space>
       </div>
     ),
-    filterIcon: filtered => (
-      <SearchOutlined style={{ color: filtered ? token.colorPrimary : undefined }} />
+    filterIcon: (filtered) => (
+      <SearchOutlined
+        style={{ color: filtered ? token.colorPrimary : undefined }}
+      />
     ),
     onFilter: (value, record) =>
-      record[dataIndex]
-        .toString()
-        .toLowerCase()
-        .includes(value.toLowerCase()),
-    onFilterDropdownVisibleChange: visible => {
+      record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownVisibleChange: (visible) => {
       if (visible) setTimeout(() => searchInput.current?.select(), 100);
     },
-    render: text =>
+    render: (text) =>
       searchedColumn === dataIndex ? (
         <Highlighter
           highlightStyle={{ backgroundColor: token.colorHighlight, padding: 0 }}
@@ -141,57 +150,57 @@ export default function Dashboard({ onDataChange }) {
         />
       ) : (
         text
-      )
+      ),
   });
 
-  // filter data by column filters; no global filter here
   const filtered = customers;
 
   const columns = [
     {
-      title: 'Name',
-      dataIndex: 'fullName',
-      key: 'fullName',
+      title: "Name",
+      dataIndex: "fullName",
+      key: "fullName",
       sorter: (a, b) => a.fullName.localeCompare(b.fullName),
-      ...getColumnSearchProps('fullName')
+      ...getColumnSearchProps("fullName"),
     },
     {
-      title: 'ID #',
-      dataIndex: 'idNumber',
-      key: 'idNumber',
-      ...getColumnSearchProps('idNumber')
+      title: "ID #",
+      dataIndex: "idNumber",
+      key: "idNumber",
+      ...getColumnSearchProps("idNumber"),
     },
     {
-      title: 'Risk Score',
-      dataIndex: 'riskScore',
-      key: 'riskScore',
+      title: "Risk Score",
+      dataIndex: "riskScore",
+      key: "riskScore",
       filters: [
-        { text: 'Low (<40)', value: 'low' },
-        { text: 'Medium (40–69)', value: 'medium' },
-        { text: 'High (70+)', value: 'high' }
+        { text: "Low (<40)", value: "low" },
+        { text: "Medium (40–69)", value: "medium" },
+        { text: "High (70+)", value: "high" },
       ],
       onFilter: (value, record) => {
-        if (value === 'low') return record.riskScore < 40;
-        if (value === 'medium') return record.riskScore >= 40 && record.riskScore < 70;
-        if (value === 'high') return record.riskScore >= 70;
+        if (value === "low") return record.riskScore < 40;
+        if (value === "medium")
+          return record.riskScore >= 40 && record.riskScore < 70;
+        if (value === "high") return record.riskScore >= 70;
         return false;
       },
-      render: val => <Progress percent={val} size="small" />
+      render: (val) => <Progress percent={val} size="small" />,
     },
     {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
       filters: [
-        { text: 'Approved', value: 'Approved' },
-        { text: 'Review',   value: 'Review' },
-        { text: 'Rejected', value: 'Rejected' }
+        { text: "Approved", value: "Approved" },
+        { text: "Review", value: "Review" },
+        { text: "Rejected", value: "Rejected" },
       ],
-      onFilter: (value, record) => record.status === value
+      onFilter: (value, record) => record.status === value,
     },
     {
-      title: 'Action',
-      key: 'action',
+      title: "Action",
+      key: "action",
       render: (_, record) => (
         <Popconfirm
           title="Delete this entry?"
@@ -203,19 +212,19 @@ export default function Dashboard({ onDataChange }) {
             Delete
           </Button>
         </Popconfirm>
-      )
-    }
+      ),
+    },
   ];
 
   if (loading) return <Spin style={{ margin: 50 }} />;
 
   return (
-    <Layout style={{ minHeight: '100vh', background: token.colorBgLayout }}>
+    <Layout style={{ minHeight: "100vh", background: token.colorBgLayout }}>
       <Content
         style={{
           margin: token.margin,
           padding: token.padding,
-          background: token.colorBgContainer
+          background: token.colorBgContainer,
         }}
       >
         <Row justify="end" style={{ marginBottom: token.margin }}>
@@ -232,7 +241,7 @@ export default function Dashboard({ onDataChange }) {
           destroyOnClose
         >
           <KycForm
-            existingIds={customers.map(c => c.idNumber)}
+            existingIds={customers.map((c) => c.idNumber)}
             onSuccess={() => {
               setModalVisible(false);
               fetchAll();
@@ -241,31 +250,26 @@ export default function Dashboard({ onDataChange }) {
           />
         </Modal>
 
-        {/* Metrics */}
         <Row gutter={[16, 16]}>
-          <Col span={6}>
+          <Col span={12}>
             <Card>
-              <Statistic title="Total Customers" value={metrics.totalCustomers} />
+              <Statistic
+                title="Total Customers"
+                value={metrics.totalCustomers}
+              />
             </Card>
           </Col>
-          <Col span={6}>
+          <Col span={12}>
             <Card>
-              <Statistic title="Avg. Risk Score" value={metrics.avgRiskScore} precision={1} />
-            </Card>
-          </Col>
-          <Col span={6}>
-            <Card>
-              <Statistic title="Total Income" value={metrics.totalIncome} prefix="₹" />
-            </Card>
-          </Col>
-          <Col span={6}>
-            <Card>
-              <Statistic title="Total Expenses" value={metrics.totalExpenses} prefix="₹" />
+              <Statistic
+                title="Avg. Risk Score"
+                value={metrics.avgRiskScore}
+                precision={1}
+              />
             </Card>
           </Col>
         </Row>
 
-        {/* Charts */}
         <Row gutter={[16, 16]} style={{ marginTop: token.margin }}>
           <Col span={12}>
             <Card title="Income vs Expenses">
@@ -309,14 +313,16 @@ export default function Dashboard({ onDataChange }) {
           </Col>
         </Row>
 
-        {/* Customer table with inline search */}
         <Row style={{ marginTop: token.margin }}>
           <Col span={24}>
             <Card title="Customer Data">
               {filtered.length ? (
                 <Table dataSource={filtered} columns={columns} rowKey="_id" />
               ) : (
-                <Empty description="No KYC records" style={{ padding: '2rem 0' }} />
+                <Empty
+                  description="No KYC records"
+                  style={{ padding: "2rem 0" }}
+                />
               )}
             </Card>
           </Col>
