@@ -14,17 +14,22 @@ A full-stack KYC (Know Your Customer) dashboard built with Node.js/Express + Mon
 
    ```
 
-2. **Backend**  
-   cd backend
+2. **Backend**
+
+   ```cd backend
    npm install
    cp .env.example .env
    npm run dev
 
+   ```
+
 3. **FrontEnd**
 
-   cd ../frontend
+   ```cd ../frontend
    npm install
    cp .env.example .env
+
+   ```
 
 # Edit .env to set your API URL:
 
@@ -32,9 +37,12 @@ A full-stack KYC (Know Your Customer) dashboard built with Node.js/Express + Mon
 
 npm start
 
-4. **Seeding sample data**  
-   cd backend
+4. **Seeding sample data**
+
+   ```cd backend
    node scripts/seedFinancials.js
+
+   ```
 
 5. **Risk Scoring Explanation**
 
